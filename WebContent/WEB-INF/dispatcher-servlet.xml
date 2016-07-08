@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:tx="http://www.springframework.org/schema/tx" 
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+xmlns:p="http://www.springframework.org/schema/p"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-4.0.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+http://www.springframework.org/schema/mvc 
+http://www.springframework.org/schema/mvc/spring-mvc.xsd
+http://www.springframework.org/schema/data/jpa
+http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+	<!-- It register the beans in context and scan the annotations inside beans and activate them -->
+	<context:component-scan base-package="com.nikunj.spring.mvc.*"/>
+
+	<bean id="User" class="com.nikunj.spring.mvc.model.User" />
+	<jpa:repositories base-package="com.nikunj.spring.mvc.repository" entity-manager-factory-ref="entityManagerFactoryBean" transaction-manager-ref="jpaTransactionManager" />
+	
+	<!-- This allow for dispatching requests to Controllers -->
+	<mvc:annotation-driven content-negotiation-manager="contentManager">
+		
+	</mvc:annotation-driven>
+	
+	<!-- JSON format support for Exception -->
+	<bean id="methodHandlerExceptionResolver"
+	      class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">
+	    <property name="messageConverters">
+	        <list>
+	            <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+	        </list>
+	    </property>
+	</bean>
+
+	<bean id="contentManager"
+            class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+            <property name="favorPathExtension" value="false"/>
+            <property name="ignoreAcceptHeader" value="false" />
+            <property name="defaultContentType" value="text/html" />
+            <property name="useJaf" value="false"/>
+            <property name="mediaTypes">
+             <map>
+                 <entry key="html" value="text/html" />
+                 <entry key="json" value="application/json" />
+                 <entry key="xml" value="application/xml" />
+             </map>
+            </property>
+    </bean>
+    
+    <!-- This helps in mapping the logical view names to directly view files under a certain pre-configured directory -->    
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/views/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+	
+	<!-- This produces a container-managed EntityManagerFactory; 
+         rather than application-managed EntityManagerFactory as in case of LocalEntityManagerFactoryBean-->
+    <bean id="entityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <!-- This makes /META-INF/persistence.xml is no longer necessary -->
+      <property name="packagesToScan" value="com.nikunj.spring.mvc.model" />
+      <!-- JpaVendorAdapter implementation for Hibernate EntityManager.
+           Exposes Hibernate's persistence provider and EntityManager extension interface -->
+      <property name="jpaVendorAdapter">
+         <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      </property>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.hbm2ddl.auto">validate</prop>
+            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+         </props>
+      </property>
+   </bean>
+  
+   <!-- Simple implementation of the standard JDBC DataSource interface, 
+        configuring the plain old JDBC DriverManager via bean properties -->
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="org.postgresql.Driver" />
+      <property name="url" value="jdbc:postgresql://localhost:5432/nmc?currentSchema=nmc_trng" />
+      <property name="username" value="postgres" />
+      <property name="password" value="" />
+   </bean>
+   
+   <!-- This transaction manager is appropriate for applications that use a single JPA EntityManagerFactory for transactional data access. 
+        JTA (usually through JtaTransactionManager) is necessary for accessing multiple transactional resources within the same transaction. -->
+    <bean id="jpaTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="entityManagerFactoryBean" />
+   </bean>
+   
+   <!-- responsible for registering the necessary Spring components that power annotation-driven transaction management; 
+        such as when @Transactional methods are invoked -->
+   	<tx:annotation-driven transaction-manager="jpaTransactionManager"/>
+    
+</beans>

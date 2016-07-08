@@ -1,0 +1,5 @@
+/home/nikunj.s/springworkspace/SpringMVCCurdRestfullWebService/src/main/java/com/nikunj/spring/mvc/repository/UserRepository.java
+/home/nikunj.s/springworkspace/SpringMVCCurdRestfullWebService/src/main/java/com/nikunj/spring/mvc/service/UserServiceImpl.java
+/home/nikunj.s/springworkspace/SpringMVCCurdRestfullWebService/src/main/java/com/nikunj/spring/mvc/model/User.java
+/home/nikunj.s/springworkspace/SpringMVCCurdRestfullWebService/src/main/java/com/nikunj/spring/mvc/service/UserService.java
+/home/nikunj.s/springworkspace/SpringMVCCurdRestfullWebService/src/main/java/com/nikunj/spring/mvc/controller/UserRestController.java

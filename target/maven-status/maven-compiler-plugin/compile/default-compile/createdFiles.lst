@@ -1,0 +1,5 @@
+com/nikunj/spring/mvc/repository/UserRepository.class
+com/nikunj/spring/mvc/service/UserServiceImpl.class
+com/nikunj/spring/mvc/model/User.class
+com/nikunj/spring/mvc/controller/UserRestController.class
+com/nikunj/spring/mvc/service/UserService.class
